@@ -64,9 +64,8 @@ def load_data(json_file='films_data.json'):
 
     return df, data
 
-def test_1b_genre_representation(df):
+def genre_representation(df):
     """
-    TEST 1B: Chi-Square Test for Genre Representation
     
     Question: Are certain genres over/under-represented at specific festivals?
     Note: Films can have multiple genres (comma-separated), so we count each genre tag
@@ -241,9 +240,9 @@ def test_1b_genre_representation(df):
     return results_df
 
 
-def test_2_festival_prestige_hierarchy(df):
+def festival_prestige_hierarchy(df):
     """
-    TEST 2: Festival Prestige Hierarchy via Co-occurrence
+    Festival Prestige Hierarchy via Co-occurrence
     
     Question: Is there a hierarchy among festivals? (measured by co-occurrence patterns)
     Method: Jaccard similarity and conditional probabilities
@@ -316,9 +315,8 @@ def test_2_festival_prestige_hierarchy(df):
     return results_df, conditional_probs
 
 
-def test_3_festival_selectivity_comparison(df):
+def festival_selectivity_comparison(df):
     """
-    TEST 3: Comparing Festival Selectivity
     
     Question: Do some festivals have more "selective" profiles than others?
     Method: Compare the festival portfolio sizes (films accepted per festival)
@@ -352,9 +350,8 @@ def test_3_festival_selectivity_comparison(df):
     
     return festival_stats
 
-def test_4b_genre_festival_affinity(df):
+def genre_festival_affinity(df):
     """
-    TEST 4B: Genre-Festival Affinity (Fisher's Exact Test)
     
     Question: For each genre, which festivals show statistical affinity?
     Method: 2x2 contingency table + Fisher's exact test
@@ -502,9 +499,8 @@ def test_4b_genre_festival_affinity(df):
     
     return results_df
 
-def test_6b_genre_temporal_trends(df):
+def genre_temporal_trends(df):
     """
-    TEST 6B: Temporal Trends in Genre Popularity
     
     Question: Are certain genres becoming more/less common at festivals over time?
     Method: Spearman correlation on genre tag proportions over time
@@ -640,58 +636,8 @@ def test_6b_genre_temporal_trends(df):
     
     return trends_df
 
-def test_7_production_company_analysis(df):
+def festival_circuit_clustering(df):
     """
-    TEST 7: Production Company Success Rate
-    
-    Question: Do certain production companies have better festival success?
-    Method: Confidence intervals and comparison
-    """
-    print("\n" + "="*80)
-    print("TEST 7: PRODUCTION COMPANY FESTIVAL SUCCESS")
-    print("="*80)
-    print("\nQuestion: Which production companies have the most festival success?\n")
-    
-    # For each production company, calculate:
-    # - Number of films
-    # - Number of festivals per film (average)
-    # - Confidence intervals
-    
-    festival_films = df[df['has_festival']].copy()
-    
-    company_stats = festival_films.groupby('production_company').agg({
-        'title': 'nunique',
-        'festival': lambda x: len(set(x))
-    }).rename(columns={'title': 'n_films', 'festival': 'n_festivals'})
-    
-    company_stats['festivals_per_film'] = company_stats['n_festivals'] / company_stats['n_films']
-    
-    # Only companies with multiple films
-    company_stats = company_stats[company_stats['n_films'] >= 3].sort_values(
-        'festivals_per_film', ascending=False
-    )
-    
-    # Calculate confidence intervals (bootstrap)
-    print("Top production companies by festival reach:\n")
-    
-    for company, row in company_stats.head(15).iterrows():
-        if company and company != 'None':
-            # Simple confidence interval using normal approximation
-            mean = row['festivals_per_film']
-            se = np.sqrt(mean * (1 + mean) / row['n_films'])  # Approximate
-            ci_lower = mean - 1.96 * se
-            ci_upper = mean + 1.96 * se
-            
-            print(f"{company}")
-            print(f"  {row['n_films']} films, {row['n_festivals']} festival appearances")
-            print(f"  {mean:.2f} festivals/film (95% CI: [{max(0, ci_lower):.2f}, {ci_upper:.2f}])\n")
-    
-    return company_stats
-
-
-def test_8_festival_circuit_clustering(df):
-    """
-    TEST 8: Festival Circuit Clustering
     
     Question: Are there distinct "festival circuits" that films tend to follow?
     Method: Identify common festival combinations
@@ -742,23 +688,7 @@ def main():
     print(f"  Total festival mentions: {len(df[df['has_festival']])}")
     print(f"  Unique festivals: {df['festival'].nunique()}\n")
     
-    # Run all tests
-    results = {}
     
-    results['test1'] = test_1b_genre_representation(df)
-    results['test2'] = test_2_festival_prestige_hierarchy(df)
-    results['test3'] = test_3_festival_selectivity_comparison(df)
-    results['test4'] = test_4b_genre_festival_affinity(df)
-    results['test5'] = test_5_director_success_patterns(df)
-    results['test6'] = test_6b_genre_temporal_trends(df)
-    results['test7'] = test_7_production_company_analysis(df)
-    results['test8'] = test_8_festival_circuit_clustering(df)
-    
-    print("\n" + "="*80)
-    print("ANALYSIS COMPLETE")
-    print("="*80)
-    print("\nAll results saved to individual test dataframes")
-    print("Run with: python statistical_analysis.py films_data.json")
 
 
 if __name__ == "__main__":
