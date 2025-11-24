@@ -24,21 +24,6 @@ pip install requests beautifulsoup4
 python festival_scraper.py
 ```
 
-### Scrape a limited number of films:
-```bash
-python festival_scraper.py --max 50
-```
-
-### Resume from a previous interrupted session:
-```bash
-python festival_scraper.py --resume
-```
-
-### Specify custom output filename:
-```bash
-python festival_scraper.py --output my_films_data
-```
-
 ## Output Files
 
 ### JSON Output (`films_data.json`)
@@ -89,29 +74,6 @@ Each festival mention includes:
 - Additional notes (e.g., "World premiere", "Best Documentary")
 - Original text for verification
 
-## Festival Pattern Recognition
-
-The scraper recognizes various festival mention patterns:
-
-```
-Official Selection DOC NYC 2024 - World premiere
-Winner - Best Documentary at Sundance 2024
-Award for Best Director
-World premiere at Cannes 2025
-Selected for BFI London Film Festival
-```
-
-## Progress Tracking
-
-- Progress is displayed during scraping
-- Checkpoint saved every 10 films
-- Can interrupt (Ctrl+C) and resume later
-- Final summary includes statistics:
-  - Total films scraped
-  - Films with festival information
-  - Total festival mentions
-  - Unique festivals
-
 ## Notes
 
 - The scraper includes a 0.5 second delay between requests to be respectful to the server
@@ -119,26 +81,6 @@ Selected for BFI London Film Festival
 - Some festival mentions may need manual review for accuracy
 - The scraper saves raw original text for each festival mention for verification
 
-## Troubleshooting
-
-### No films found
-The website structure may have changed. Check the base URL and HTML structure.
-
-### Connection errors
-- Check your internet connection
-- The site may be blocking automated requests
-- Try reducing the scraping speed (increase sleep time in `get_soup()`)
-
-### Missing festival information
-Festival mentions are extracted from free text, so some patterns may be missed. Check the `original_text` field in the output to verify.
-
-## Data Analysis Tips
-
-### Using the CSV output:
-- Filter for specific festivals
-- Count selections per festival
-- Analyse which directors/producers have most festival selections
-- Track films by year and genre
 
 ### Using the JSON output:
 - Full nested data structure for programmatic access
